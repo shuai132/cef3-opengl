@@ -244,7 +244,7 @@ if(OS_MACOSX)
     -funwind-tables                 # Support stack unwinding for backtrace()
     -fvisibility=hidden             # Give hidden visibility to declarations that are not explicitly marked as visible
     -Wall                           # Enable all warnings
-    -Werror                         # Treat warnings as errors
+#    -Werror                         # Treat warnings as errors
     -Wextra                         # Enable additional warnings
     -Wendif-labels                  # Warn whenever an #else or an #endif is followed by text
     -Wnewline-eof                   # Warn about no newline at end of file

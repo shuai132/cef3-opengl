@@ -5,18 +5,23 @@
 #include <include/wrapper/cef_library_loader.h>
 #include <include/internal/cef_mac.h>
 #include "simple_app.h"
+#include "simple_handler.h"
 
-void drawOther() {
+static void drawCEF() {
+    SimpleHandler::GetInstance()->Render();
+}
+
+static void drawTriangle() {
     /* Draw a triangle */
     glBegin(GL_TRIANGLES);
 
-    glColor3f(1.0, 0.0, 1.0);    // Red
+    glColor3f(1.0, 0.0, 0.0);    // Red
     glVertex3f(0.0, 1.0, 0.0);
 
     glColor3f(0.0, 1.0, 0.0);    // Green
     glVertex3f(-1.0, -1.0, 0.0);
 
-    glColor3f(1.0, 0.0, 1.0);    // Blue
+    glColor3f(0.0, 0.0, 1.0);    // Blue
     glVertex3f(1.0, -1.0, 0.0);
 
     glEnd();
@@ -24,6 +29,24 @@ void drawOther() {
 
 int main(int argc, char* argv[])
 {
+    /************* GLFW *************/
+    /* Initialize the library */
+    if (!glfwInit())
+        return -1;
+
+    /* Create a windowed mode window and its OpenGL context */
+    GLFWwindow* window = glfwCreateWindow(480, 320, "Hello World", NULL, NULL);
+    if (!window)
+    {
+        glfwTerminate();
+        return -1;
+    }
+
+    glfwSwapInterval(1);
+
+    /* Make the window's context current */
+    glfwMakeContextCurrent(window);
+
     /************* CEF3 *************/
     // Load the CEF framework library at runtime instead of linking directly
     // as required by the macOS sandbox implementation.
@@ -36,13 +59,14 @@ int main(int argc, char* argv[])
 
     // Specify CEF global settings here.
     CefSettings settings;
+    settings.windowless_rendering_enabled = true;
 
-//    // When generating projects with CMake the CEF_USE_SANDBOX value will be defined
-//    // automatically. Pass -DUSE_SANDBOX=OFF to the CMake command-line to disable
-//    // use of the sandbox.
-//    #if !defined(CEF_USE_SANDBOX)
-//        settings.no_sandbox = true;
-//    #endif
+    // When generating projects with CMake the CEF_USE_SANDBOX value will be defined
+    // automatically. Pass -DUSE_SANDBOX=OFF to the CMake command-line to disable
+    // use of the sandbox.
+#if !defined(CEF_USE_SANDBOX)
+    settings.no_sandbox = true;
+#endif
 
     // SimpleApp implements application-level callbacks for the browser process.
     // It will create the first browser instance in OnContextInitialized() after
@@ -56,26 +80,7 @@ int main(int argc, char* argv[])
     // called.
 //    CefRunMessageLoop();
 
-
-    /************* GLFW *************/
-    GLFWwindow* window;
-
-    /* Initialize the library */
-    if (!glfwInit())
-        return -1;
-
-    /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(480, 320, "Hello World", NULL, NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        return -1;
-    }
-
-    /* Make the window's context current */
-    glfwMakeContextCurrent(window);
-
-    bool isDrawOther = false;
+    volatile bool isDrawOther = false;
     new std::thread([&]{
         while (true) {
             std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -86,30 +91,19 @@ int main(int argc, char* argv[])
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-        CefDoMessageLoopWork();
-
-        /* Draw a triangle */
-        glBegin(GL_TRIANGLES);
-
-        glColor3f(1.0, 0.0, 0.0);    // Red
-        glVertex3f(0.0, 1.0, 0.0);
-
-        glColor3f(0.0, 1.0, 0.0);    // Green
-        glVertex3f(-1.0, -1.0, 0.0);
-
-        glColor3f(0.0, 0.0, 1.0);    // Blue
-        glVertex3f(1.0, -1.0, 0.0);
-
-        glEnd();
-
-        if (isDrawOther)
-            drawOther();
+        if (true) {
+            drawCEF();
+        } else {
+            drawTriangle();
+        }
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
         /* Poll for and process events */
         glfwPollEvents();
+
+        CefDoMessageLoopWork();
     }
 
     // Shut down CEF.

@@ -101,6 +101,8 @@ void SimpleApp::OnContextInitialized() {
     window_info.SetAsPopup(NULL, "cefsimple");
 #endif
 
+    window_info.SetAsWindowless(kNullWindowHandle);
+
     // Create the first browser window.
     CefBrowserHost::CreateBrowser(window_info, handler, url, browser_settings, nullptr);
   }

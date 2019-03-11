@@ -6,8 +6,12 @@
 #define CEF_TESTS_CEFSIMPLE_SIMPLE_HANDLER_H_
 
 #include "include/cef_client.h"
+#include "osr_renderer_settings.h"
 
 #include <list>
+#include <GLFW/glfw3.h>
+
+using namespace client;
 
 class SimpleHandler : public CefClient,
                       public CefDisplayHandler,
@@ -51,15 +55,20 @@ class SimpleHandler : public CefClient,
 
   bool IsClosing() const { return is_closing_; }
 
+  CefRefPtr<CefRenderHandler> GetRenderHandler() override { return this; }
 
-    virtual void GetViewRect(CefRefPtr<CefBrowser> browser, CefRect& rect) OVERRIDE;
+  virtual void GetViewRect(CefRefPtr<CefBrowser> browser, CefRect& rect) OVERRIDE;
 
-    virtual void OnPaint(CefRefPtr<CefBrowser> browser,
-                         PaintElementType type,
-                         const RectList& dirtyRects,
-                         const void* buffer,
-                         int width,
-                         int height) OVERRIDE;
+  virtual void OnPaint(CefRefPtr<CefBrowser> browser,
+                              PaintElementType type,
+                              const RectList& dirtyRects,
+                              const void* buffer,
+                              int width,
+                              int height) OVERRIDE;
+
+  void Initialize();
+  bool IsTransparent();
+  void Render();
 
  private:
   // Platform-specific implementation.
@@ -74,6 +83,20 @@ class SimpleHandler : public CefClient,
   BrowserList browser_list_;
 
   bool is_closing_;
+
+private:
+  //const OsrRendererSettings settings_;
+  bool initialized_;
+  unsigned int texture_id_;
+  int view_width_;
+  int view_height_;
+  CefRect popup_rect_;
+  CefRect original_popup_rect_;
+  float spin_x_;
+  float spin_y_;
+  CefRect update_rect_;
+
+  OsrRendererSettings settings_ = {};
 
   // Include the default reference counting implementation.
   IMPLEMENT_REFCOUNTING(SimpleHandler);
