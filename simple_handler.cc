@@ -145,9 +145,9 @@ void SimpleHandler::CloseAllBrowsers(bool force_close) {
 }
 
 void SimpleHandler::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect& rect) {
-  printf("wtf:GetViewRect\n");
+  printf("wtf:GetViewRect:%d, %d\n", width, height);
 
-  rect = CefRect(0, 0, 480, 320);
+  rect = CefRect(0, 0, width, height);
 }
 
 void SimpleHandler::OnPaint(CefRefPtr<CefBrowser> browser,

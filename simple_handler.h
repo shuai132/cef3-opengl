@@ -100,6 +100,17 @@ private:
 
   // Include the default reference counting implementation.
   IMPLEMENT_REFCOUNTING(SimpleHandler);
+
+public:
+  BrowserList& getBrowserList() {return browser_list_;}
+  void resize(int w, int h) {
+    width = w;
+    height = h;
+  }
+
+private:
+  int width = 1024;
+  int height = 768;
 };
 
 #endif  // CEF_TESTS_CEFSIMPLE_SIMPLE_HANDLER_H_
