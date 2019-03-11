@@ -275,7 +275,7 @@ void SimpleHandler::Initialize() {
 #if defined(OS_WIN)
   settings->shared_texture_enabled = shared_texture_enabled_;
 #endif
-  settings_.external_begin_frame_enabled = false;
+  settings_.external_begin_frame_enabled = true;
   settings_.begin_frame_rate = 0;
 //  settings_.background_color = browser_background_color_;
 
@@ -332,18 +332,18 @@ void SimpleHandler::Render() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   VERIFY_NO_ERROR;
 
-  glMatrixMode(GL_MODELVIEW);
-  VERIFY_NO_ERROR;
-  glLoadIdentity();
-  VERIFY_NO_ERROR;
-
-  // Match GL units to screen coordinates.
-  glViewport(0, 0, view_width_, view_height_);
-  VERIFY_NO_ERROR;
-  glMatrixMode(GL_PROJECTION);
-  VERIFY_NO_ERROR;
-  glLoadIdentity();
-  VERIFY_NO_ERROR;
+//  glMatrixMode(GL_MODELVIEW);
+//  VERIFY_NO_ERROR;
+//  glLoadIdentity();
+//  VERIFY_NO_ERROR;
+//
+//  // Match GL units to screen coordinates.
+//  glViewport(0, 0, view_width_, view_height_);
+//  VERIFY_NO_ERROR;
+//  glMatrixMode(GL_PROJECTION);
+//  VERIFY_NO_ERROR;
+//  glLoadIdentity();
+//  VERIFY_NO_ERROR;
 
   // Draw the background gradient.
   glPushAttrib(GL_ALL_ATTRIB_BITS);

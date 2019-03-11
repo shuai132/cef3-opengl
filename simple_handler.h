@@ -92,8 +92,8 @@ private:
   int view_height_;
   CefRect popup_rect_;
   CefRect original_popup_rect_;
-  float spin_x_;
-  float spin_y_;
+  float spin_x_ = 0;
+  float spin_y_ = 0;
   CefRect update_rect_;
 
   OsrRendererSettings settings_ = {};
