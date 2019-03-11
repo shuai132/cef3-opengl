@@ -2,6 +2,9 @@
 
 #include <thread>
 #include <time.h>
+#include <include/wrapper/cef_library_loader.h>
+#include <include/internal/cef_mac.h>
+#include "simple_app.h"
 
 void drawOther() {
     /* Draw a triangle */
@@ -19,8 +22,42 @@ void drawOther() {
     glEnd();
 }
 
-int main()
+int main(int argc, char* argv[])
 {
+    /************* CEF3 *************/
+    // Load the CEF framework library at runtime instead of linking directly
+    // as required by the macOS sandbox implementation.
+    CefScopedLibraryLoader library_loader;
+    if (!library_loader.LoadInMain())
+        return 1;
+
+    // Provide CEF with command-line arguments.
+    CefMainArgs main_args(argc, argv);
+
+    // Specify CEF global settings here.
+    CefSettings settings;
+
+//    // When generating projects with CMake the CEF_USE_SANDBOX value will be defined
+//    // automatically. Pass -DUSE_SANDBOX=OFF to the CMake command-line to disable
+//    // use of the sandbox.
+//    #if !defined(CEF_USE_SANDBOX)
+//        settings.no_sandbox = true;
+//    #endif
+
+    // SimpleApp implements application-level callbacks for the browser process.
+    // It will create the first browser instance in OnContextInitialized() after
+    // CEF has initialized.
+    CefRefPtr<SimpleApp> app(new SimpleApp);
+
+    // Initialize CEF for the browser process.
+    CefInitialize(main_args, settings, app.get(), NULL);
+
+    // Run the CEF message loop. This will block until CefQuitMessageLoop() is
+    // called.
+//    CefRunMessageLoop();
+
+
+    /************* GLFW *************/
     GLFWwindow* window;
 
     /* Initialize the library */
@@ -49,6 +86,8 @@ int main()
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+        CefDoMessageLoopWork();
+
         /* Draw a triangle */
         glBegin(GL_TRIANGLES);
 
@@ -72,6 +111,9 @@ int main()
         /* Poll for and process events */
         glfwPollEvents();
     }
+
+    // Shut down CEF.
+    CefShutdown();
 
     glfwTerminate();
     return 0;
